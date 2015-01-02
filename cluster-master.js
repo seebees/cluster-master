@@ -301,6 +301,16 @@ function forkListener () {
         worker.process.kill("SIGKILL")
       }, 5000)
     })
+
+    // Manageing logs can be a pain, stdout works nicely
+    // This gives us nice data about who, when etc
+    // and keeps the worker logging simple
+    if (worker.process.stdout) { // && some config???
+      worker.process.stdout
+        .pipe(require('./LineStream.js')())
+        .pipe(require('./DefaultStdData.js')()) // configuration?
+        .pipe(process.stdout)
+    }
   })
 }
 
